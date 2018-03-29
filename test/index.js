@@ -2,7 +2,7 @@ require("dotenv").config()
 const url = require("url")
 const { fetch } = require("fetch-ponyfill")()
 
-const ACTransit = require("./")
+const ACTransit = require("../")
 const client = new ACTransit({ key: process.env.AC_TRANSIT_API_TOKEN, fetch, URL: url.URL })
 
 const latitude = "37.804363"
@@ -63,14 +63,6 @@ it("ACTransit::vehicle", async () => {
   await client.vehicle({ vehicleId })
 })
 
-it("ACTransit::gtfsInfo", async () => {
-  await client.gtfsInfo()
-})
-
-it("ACTransit::gtfsSchedule", async () => {
-  await client.gtfsSchedule()
-}).timeout(30000)
-
 it("ACTransit::serviceNotices", async () => {
   await client.serviceNotices()
 })
@@ -91,3 +83,10 @@ it("ACTransit::gtfsRealTimeVehicles", async () => {
   await client.gtfsRealTimeVehicles()
 })
 
+it("ACTransit::gtfsInfo", async () => {
+  await client.gtfsInfo()
+})
+
+it("ACTransit::gtfsSchedule", async () => {
+  await client.gtfsSchedule()
+}).timeout(30000)
