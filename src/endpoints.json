@@ -1,0 +1,78 @@
+[
+  {
+    "methodName": "nearbyStops",
+    "path": "transit/stops/{latitude}/{longitude}/{distance}",
+    "queryParams": [ "routeName" ]
+  },
+  {
+    "methodName": "stopPredictions",
+    "path": "transit/stops/{stopId}/predictions"
+  },
+  {
+    "methodName": "vehicle",
+    "path": "/transit/vehicle/{vehicleId}"
+  },
+  {
+    "methodName": "gtfsInfo",
+    "path": "/transit/gtfs",
+    "type": "text"
+  },
+  {
+    "methodName": "gtfsSchedule",
+    "path": "/transit/gtfs/download",
+    "type": "text"
+  },
+  {
+    "methodName": "serviceNotices",
+    "path": "/transit/servicenotices"
+  },
+  {
+    "methodName": "gtfsRealTimeTripUpdates",
+    "path": "/transit/gtfsrt/tripupdates",
+    "type": "text"
+  },
+  {
+    "methodName": "gtfsRealTimeAlerts",
+    "path": "/transit/gtfsrt/alerts",
+    "type": "text"
+  },
+  {
+    "methodName": "gtfsRealTimeVehicles",
+    "path": "/transit/gtfsrt/vehicles",
+    "type": "text"
+  },
+  {
+    "methodName": "routes",
+    "path": "/transit/routes"
+  },
+  {
+    "methodName": "route",
+    "path": "/transit/route/{routeName}"
+  },
+  {
+    "methodName": "routeTrips",
+    "path": "/transit/route/{routeName}/trips",
+    "queryParams": [ "direction", "scheduleType" ]
+  },
+  {
+    "methodName": "routeDirections",
+    "path": "/transit/route/{routeName}/directions"
+  },
+  {
+    "methodName": "routeTrip",
+    "path": "/transit/route/{routeName}/trip/{tripId}/pattern"
+  },
+  {
+    "methodName": "routeTripStops",
+    "path": "/transit/route/{routeName}/trip/{tripId}/stops"
+  },
+  {
+    "methodName": "routeVehicles",
+    "path": "/transit/route/{routeName}/vehicles"
+  },
+  {
+    "methodName": "routeTripEstimate",
+    "path": "/transit/route/{routeName}/tripestimate",
+    "queryParams": [ "fromStopId", "toStopId" ]
+  }
+]
