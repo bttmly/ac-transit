@@ -1,9 +1,11 @@
 require("dotenv").config()
-const url = require("url")
+const { URL } = require("url")
+const expect = require("expect")
 const { fetch } = require("fetch-ponyfill")()
 
+const key = process.env.AC_TRANSIT_API_TOKEN
 const ACTransit = require("../")
-const client = new ACTransit({ key: process.env.AC_TRANSIT_API_TOKEN, fetch, URL: url.URL })
+const client = new ACTransit({ key, fetch, URL })
 
 const latitude = "37.804363"
 const longitude = "-122.271111"
@@ -11,8 +13,6 @@ const stopId = 54700
 const routeName = "NL"
 
 let vehicleId, tripId, fromStopId, toStopId
-
-global.URL = url.URL
 
 it("ACTransit::routes", async () => {
   await client.routes()
@@ -38,7 +38,7 @@ it("ACTransit::routeTrip", async () => {
 
 it("ACTransit::routeTripStops", async () => {
   const results = await client.routeTripStops({ routeName, tripId })
-  const [ secondLastStop, lastStop ] = results.slice(-2);
+  const [ secondLastStop, lastStop ] = results.slice(-2)
   fromStopId = secondLastStop.StopId
   toStopId = lastStop.StopId
 })
@@ -90,3 +90,32 @@ it("ACTransit::gtfsInfo", async () => {
 it("ACTransit::gtfsSchedule", async () => {
   await client.gtfsSchedule()
 }).timeout(30000)
+
+describe.only("dependencies", () => {
+  it("needs an API key", async () => {
+    expect.assertions(1)
+    try {
+      await ACTransit.routes()
+    } catch (e) {
+      expect(e.message).toMatch("Must pass an API key")
+    }
+  })
+
+  it("needs a fetch implementation", async () => {
+    expect.assertions(1)
+    try {
+      await ACTransit.routes({ key }, { URL })
+    } catch (e) {
+      expect(e.message).toMatch("Must have a global `fetch` function or pass an implementation")
+    }
+  })
+
+  it("needs a URL implementation", async () => {
+    expect.assertions(1)
+    try {
+      await ACTransit.routes({ key }, { fetch })
+    } catch (e) {
+      expect(e.message).toMatch("Must have a global `URL` constructor or pass an implementation")
+    }
+  })
+})

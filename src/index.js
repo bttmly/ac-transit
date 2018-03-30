@@ -1,4 +1,4 @@
-const endpoints = require("./endpoints");
+const endpoints = require("./endpoints")
 
 function ACTransit (opts) {
   if (!(this instanceof ACTransit)) return new ACTransit(opts)
@@ -7,6 +7,7 @@ function ACTransit (opts) {
   } else {
     this._key = opts.key
     this._fetch = opts.fetch
+    this._URL = opts.URL
   }
 }
 module.exports = ACTransit
@@ -22,15 +23,14 @@ const fetchPropsJSON = {
 const fetchPropsText = {}
 
 function makeEndpoint (methodName, path, queryParams = [], type) {
-  return async function (parameters = {}, { fetch } = {}) {
-    if (typeof parameters.key !== "string") {
-      throw new Error("Must pass an API key")
-    }
-
+  return async function (parameters = {}, { fetch = global.fetch, URL = global.URL } = {}) {
+    if (typeof parameters.key !== "string") throw new Error("Must pass an API key")
+    if (fetch == null) throw new Error("Must have a global `fetch` function or pass an implementation")
+    if (URL == null) throw new Error("Must have a global `URL` constructor or pass an implementation")
 
     const fetchProps = type === "json" ? fetchPropsJSON : fetchPropsText
 
-    const u = new global.URL(baseURL)
+    const u = new URL(baseURL)
     u.pathname = interpolate(path, parameters)
     u.searchParams.set("token", parameters.key)
     for (const key of queryParams) {
@@ -57,7 +57,7 @@ endpoints.forEach(({ methodName, path, queryParams, type = "json" }) => {
   ACTransit[methodName] = makeEndpoint(methodName, path, queryParams, type)
   ACTransit.prototype[methodName] = function (_params = {}) {
     const params = Object.assign({}, _params, { key: this._key })
-    return ACTransit[methodName](params, { fetch: this._fetch })
+    return ACTransit[methodName](params, { fetch: this._fetch, URL: this._URL })
   }
 })
 
