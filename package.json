@@ -1,6 +1,6 @@
 {
   "name": "ac-transit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AC Transit API client",
   "main": "index.js",
   "license": "MIT",
