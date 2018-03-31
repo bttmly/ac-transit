@@ -91,7 +91,7 @@ it("ACTransit::gtfsSchedule", async () => {
   await client.gtfsSchedule()
 }).timeout(30000)
 
-describe.only("dependencies", () => {
+describe("dependencies", () => {
   it("needs an API key", async () => {
     expect.assertions(1)
     try {

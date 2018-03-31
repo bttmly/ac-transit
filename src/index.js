@@ -22,11 +22,11 @@ const fetchPropsJSON = {
 
 const fetchPropsText = {}
 
-function makeEndpoint (methodName, path, queryParams = [], type) {
-  return async function (parameters = {}, { fetch = global.fetch, URL = global.URL } = {}) {
-    if (typeof parameters.key !== "string") throw new Error("Must pass an API key")
-    if (fetch == null) throw new Error("Must have a global `fetch` function or pass an implementation")
-    if (URL == null) throw new Error("Must have a global `URL` constructor or pass an implementation")
+function makeEndpoint (methodName, path, queryParams = [], type = "json") {
+  return function (parameters = {}, { fetch = global.fetch, URL = global.URL } = {}) {
+    if (typeof parameters.key !== "string") return Promise.reject(new Error("Must pass an API key"))
+    if (fetch == null) return Promise.reject(new Error("Must have a global `fetch` function or pass an implementation"))
+    if (URL == null) return Promise.reject(new Error("Must have a global `URL` constructor or pass an implementation"))
 
     const fetchProps = type === "json" ? fetchPropsJSON : fetchPropsText
 
@@ -38,22 +38,20 @@ function makeEndpoint (methodName, path, queryParams = [], type) {
       u.searchParams.set(key, parameters[key])
     }
 
-    // console.log("REQUESTING:", u.toString())
-    if (fetch == null) fetch = global.fetch
+    return fetch(u.toString(), fetchProps)
+      .then(function (resp) {
+        if (resp.status !== 200) {
+          return resp.text(function (text) {
+            throw new Error(text)
+          })
+        }
 
-    const resp = await fetch(u.toString(), fetchProps)
-    if (resp.status !== 200) {
-      const text = await resp.text()
-      const err = new Error("ACTransit API error")
-      err.rawResponse = text
-      throw err
-    }
-
-    return type === "json" ? resp.json() : resp.text()
+        return type === "json" ? resp.json() : resp.text()
+      })
   }
 }
 
-endpoints.forEach(({ methodName, path, queryParams, type = "json" }) => {
+endpoints.forEach(({ methodName, path, queryParams, type }) => {
   ACTransit[methodName] = makeEndpoint(methodName, path, queryParams, type)
   ACTransit.prototype[methodName] = function (_params = {}) {
     const params = Object.assign({}, _params, { key: this._key })
